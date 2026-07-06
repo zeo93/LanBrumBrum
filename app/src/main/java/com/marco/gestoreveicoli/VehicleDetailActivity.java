@@ -64,7 +64,7 @@ public class VehicleDetailActivity extends AppCompatActivity {
         }
 
         fotoView = findViewById(R.id.detailFoto);
-        fotoView.setOnClickListener(v -> photoLauncher.launch("image/*"));
+        fotoView.setOnClickListener(v -> showPhotoOptions());
         fotoView.setOnLongClickListener(v -> {
             if (PhotoStore.has(this, vehicle.id)) {
                 new MaterialAlertDialogBuilder(this)
@@ -100,6 +100,61 @@ public class VehicleDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> showMaintenanceDialog(null));
 
         refresh();
+    }
+
+    private void showPhotoOptions() {
+        boolean hasPhoto = PhotoStore.has(this, vehicle.id);
+        String[] options = hasPhoto
+                ? new String[]{getString(R.string.cerca_foto_internet), getString(R.string.scegli_galleria), getString(R.string.rimuovi_foto)}
+                : new String[]{getString(R.string.cerca_foto_internet), getString(R.string.scegli_galleria)};
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.foto_veicolo)
+                .setItems(options, (d, which) -> {
+                    if (which == 0) {
+                        fetchWebPhoto();
+                    } else if (which == 1) {
+                        photoLauncher.launch("image/*");
+                    } else {
+                        PhotoStore.delete(this, vehicle.id);
+                        refresh();
+                    }
+                })
+                .setNegativeButton(R.string.annulla, null)
+                .show();
+    }
+
+    private void fetchWebPhoto() {
+        String query = vehicle.marcaModello().trim();
+        if (query.isEmpty()) {
+            Toast.makeText(this, R.string.foto_non_trovata, Toast.LENGTH_LONG).show();
+            return;
+        }
+        View v = getLayoutInflater().inflate(R.layout.dialog_progress, null);
+        AlertDialog progress = new MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.ricerca_foto, query))
+                .setView(v)
+                .setCancelable(false)
+                .create();
+        progress.show();
+        WebPhotoFetcher.fetch(this, query, (file, error) -> {
+            progress.dismiss();
+            if (isFinishing()) {
+                return;
+            }
+            if (file != null) {
+                boolean ok = PhotoStore.saveFromFile(this, vehicle.id, file);
+                file.delete();
+                if (ok) {
+                    refresh();
+                } else {
+                    Toast.makeText(this, R.string.foto_errore, Toast.LENGTH_LONG).show();
+                }
+            } else if (error != null) {
+                Toast.makeText(this, getString(R.string.errore_generico, error), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, R.string.foto_non_trovata, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void refresh() {

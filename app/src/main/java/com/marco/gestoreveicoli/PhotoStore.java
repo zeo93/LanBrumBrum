@@ -40,7 +40,17 @@ public class PhotoStore {
                     out.write(buf, 0, n);
                 }
             }
+            return saveFromFile(c, vehicleId, tmp);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            tmp.delete();
+        }
+    }
 
+    /** Elabora e salva un'immagine già presente su file (es. scaricata dal web). */
+    public static boolean saveFromFile(Context c, String vehicleId, File tmp) {
+        try {
             BitmapFactory.Options bounds = new BitmapFactory.Options();
             bounds.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(tmp.getAbsolutePath(), bounds);
@@ -89,8 +99,6 @@ public class PhotoStore {
             return true;
         } catch (Exception e) {
             return false;
-        } finally {
-            tmp.delete();
         }
     }
 

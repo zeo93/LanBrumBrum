@@ -74,8 +74,12 @@
     <string name="errore">Errore</string>
     <string name="errore_download">Download non riuscito: %1$s</string>
     <string name="foto_veicolo">Foto del veicolo</string>
-    <string name="foto_hint">Tocca la foto per aggiungerla o cambiarla, tienila premuta per rimuoverla</string>
+    <string name="foto_hint">Tocca la foto per cercarla su internet o sceglierla dalla galleria</string>
     <string name="rimuovi_foto">Rimuovi foto</string>
     <string name="conferma_rimuovi_foto">Rimuovere la foto del veicolo?</string>
     <string name="foto_errore">Impossibile caricare l\'immagine</string>
+    <string name="cerca_foto_internet">Cerca foto su internet (marca e modello)</string>
+    <string name="scegli_galleria">Scegli dalla galleria</string>
+    <string name="ricerca_foto">Ricerca foto di %1$s…</string>
+    <string name="foto_non_trovata">Nessuna foto trovata per questo modello: prova dalla galleria</string>
 </resources>
