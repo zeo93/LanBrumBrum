@@ -1,6 +1,5 @@
 package com.marco.gestoreveicoli;
 
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,31 +26,6 @@ public class NotificationHelper {
         NotificationChannel updates = new NotificationChannel(CHANNEL_UPDATES,
                 c.getString(R.string.canale_aggiornamenti), NotificationManager.IMPORTANCE_DEFAULT);
         nm.createNotificationChannel(updates);
-    }
-
-    /** Controllo giornaliero delle scadenze intorno alle 9:00. */
-    public static void scheduleDaily(Context c) {
-        AlarmManager am = c.getSystemService(AlarmManager.class);
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 9);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
-            cal.add(Calendar.DAY_OF_YEAR, 1);
-        }
-        am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, dailyIntent(c));
-    }
-
-    public static void cancelDaily(Context c) {
-        AlarmManager am = c.getSystemService(AlarmManager.class);
-        am.cancel(dailyIntent(c));
-    }
-
-    private static PendingIntent dailyIntent(Context c) {
-        return PendingIntent.getBroadcast(c, 100,
-                new Intent(c, NotificationReceiver.class),
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     /** Notifica le manutenzioni con scadenza entro i giorni di preavviso (o già scadute). */

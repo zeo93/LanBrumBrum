@@ -50,9 +50,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> VehicleDialog.show(this, storage, null, this::refresh));
 
         NotificationHelper.ensureChannels(this);
-        if (Prefs.notificheAttive(this)) {
-            NotificationHelper.scheduleDaily(this);
-        }
+        DailyWorker.schedule(this);
         UpdateChecker.checkOnStartup(this);
     }
 

@@ -37,7 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView updateStatus;
 
     private final ActivityResultLauncher<String> exportLauncher =
-            registerForActivityResult(new ActivityResultContracts.CreateDocument("application/json"), uri -> {
+            registerForActivityResult(new ActivityResultContracts.CreateDocument("application/zip"), uri -> {
                 if (uri != null) {
                     doExport(uri);
                 }
@@ -76,13 +76,11 @@ public class SettingsActivity extends AppCompatActivity {
             Prefs.setNotificheAttive(this, checked);
             if (checked) {
                 NotificationHelper.ensureChannels(this);
-                NotificationHelper.scheduleDaily(this);
+                DailyWorker.schedule(this);
                 if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this,
                         Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                     notifPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
                 }
-            } else {
-                NotificationHelper.cancelDaily(this);
             }
         });
 
@@ -119,13 +117,14 @@ public class SettingsActivity extends AppCompatActivity {
         // --- Dati ---
         Button export = findViewById(R.id.btnEsporta);
         export.setOnClickListener(v -> {
-            String name = "gestore_veicoli_" +
-                    new SimpleDateFormat("yyyyMMdd", Locale.ITALY).format(new Date()) + ".json";
+            String name = "lanbrumbrum_backup_" +
+                    new SimpleDateFormat("yyyyMMdd", Locale.ITALY).format(new Date()) + ".zip";
             exportLauncher.launch(name);
         });
 
         Button importBtn = findViewById(R.id.btnImporta);
-        importBtn.setOnClickListener(v -> importLauncher.launch(new String[]{"application/json", "text/plain", "application/octet-stream"}));
+        importBtn.setOnClickListener(v -> importLauncher.launch(new String[]{
+                "application/zip", "application/json", "text/plain", "application/octet-stream"}));
 
         // --- Aggiornamenti ---
         TextView versione = findViewById(R.id.textVersione);
@@ -165,12 +164,34 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    /** Backup ZIP completo: dati.json + foto dei veicoli. */
     private void doExport(Uri uri) {
-        try (OutputStream out = getContentResolver().openOutputStream(uri, "wt")) {
-            out.write(storage.exportJson().getBytes(StandardCharsets.UTF_8));
+        try (java.util.zip.ZipOutputStream zip = new java.util.zip.ZipOutputStream(
+                getContentResolver().openOutputStream(uri, "wt"))) {
+            zip.putNextEntry(new java.util.zip.ZipEntry("dati.json"));
+            zip.write(storage.exportJson().getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+            for (Vehicle v : storage.vehicles()) {
+                java.io.File foto = PhotoStore.file(this, v.id);
+                if (foto.exists()) {
+                    zip.putNextEntry(new java.util.zip.ZipEntry("photos/" + v.id + ".jpg"));
+                    try (InputStream in = new java.io.FileInputStream(foto)) {
+                        copia(in, zip);
+                    }
+                    zip.closeEntry();
+                }
+            }
             Toast.makeText(this, getString(R.string.export_ok, storage.vehicles().size()), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.errore_generico, e.getMessage()), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static void copia(InputStream in, java.io.OutputStream out) throws java.io.IOException {
+        byte[] buf = new byte[8192];
+        int n;
+        while ((n = in.read(buf)) > 0) {
+            out.write(buf, 0, n);
         }
     }
 
@@ -183,15 +204,27 @@ public class SettingsActivity extends AppCompatActivity {
                 .show();
     }
 
+    /** Importa un backup ZIP (dati + foto) o un vecchio backup JSON. */
     private void doImport(Uri uri) {
-        try (InputStream in = getContentResolver().openInputStream(uri)) {
-            StringBuilder sb = new StringBuilder();
-            BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            String line;
-            while ((line = r.readLine()) != null) {
-                sb.append(line).append('\n');
+        try (java.io.BufferedInputStream in = new java.io.BufferedInputStream(
+                getContentResolver().openInputStream(uri))) {
+            in.mark(4);
+            int b1 = in.read();
+            int b2 = in.read();
+            in.reset();
+            boolean isZip = b1 == 'P' && b2 == 'K';
+            int n;
+            if (isZip) {
+                n = importZip(in);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+                String line;
+                while ((line = r.readLine()) != null) {
+                    sb.append(line).append('\n');
+                }
+                n = storage.importJson(sb.toString());
             }
-            int n = storage.importJson(sb.toString());
             if (n < 0) {
                 Toast.makeText(this, R.string.import_non_valido, Toast.LENGTH_LONG).show();
             } else {
@@ -200,6 +233,29 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.errore_generico, e.getMessage()), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private int importZip(InputStream in) throws java.io.IOException {
+        int importati = -1;
+        java.util.zip.ZipInputStream zip = new java.util.zip.ZipInputStream(in);
+        java.util.zip.ZipEntry entry;
+        while ((entry = zip.getNextEntry()) != null) {
+            String nome = entry.getName();
+            if (nome.equals("dati.json")) {
+                java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+                copia(zip, buf);
+                importati = storage.importJson(buf.toString("UTF-8"));
+            } else if (nome.startsWith("photos/") && nome.endsWith(".jpg") && !entry.isDirectory()) {
+                String id = nome.substring("photos/".length(), nome.length() - ".jpg".length());
+                if (!id.contains("/") && !id.contains("\\")) {
+                    try (java.io.FileOutputStream out = new java.io.FileOutputStream(PhotoStore.file(this, id))) {
+                        copia(zip, out);
+                    }
+                }
+            }
+            zip.closeEntry();
+        }
+        return importati;
     }
 
     @Override

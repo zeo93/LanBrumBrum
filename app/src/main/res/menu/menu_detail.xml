@@ -12,6 +12,10 @@
         android:title="@string/modifica"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_pdf"
+        android:title="@string/esporta_pdf"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_delete"
         android:title="@string/elimina_veicolo"
         app:showAsAction="never" />

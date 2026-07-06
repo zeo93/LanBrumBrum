@@ -65,45 +65,60 @@ public class UpdateChecker {
         Handler main = new Handler(Looper.getMainLooper());
         new Thread(() -> {
             try {
-                HttpURLConnection conn = (HttpURLConnection) new URL(API_LATEST).openConnection();
-                conn.setRequestProperty("Accept", "application/vnd.github+json");
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(10000);
-                int code = conn.getResponseCode();
-                if (code != 200) {
-                    conn.disconnect();
-                    main.post(() -> callback.onResult(null,
-                            code == 404 ? context.getString(R.string.nessuna_release) : "HTTP " + code));
-                    return;
-                }
-                StringBuilder sb = new StringBuilder();
-                try (BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                    String line;
-                    while ((line = r.readLine()) != null) {
-                        sb.append(line);
-                    }
-                }
-                conn.disconnect();
-                JSONObject o = new JSONObject(sb.toString());
-                UpdateInfo info = new UpdateInfo();
-                info.version = o.optString("tag_name", "").replaceFirst("^v", "");
-                info.changelog = o.optString("body", "");
-                JSONArray assets = o.optJSONArray("assets");
-                if (assets != null) {
-                    for (int i = 0; i < assets.length(); i++) {
-                        JSONObject a = assets.getJSONObject(i);
-                        if (a.optString("name", "").endsWith(".apk")) {
-                            info.apkUrl = a.optString("browser_download_url");
-                            break;
-                        }
-                    }
-                }
+                UpdateInfo info = fetchLatest(context);
                 boolean newer = isNewer(info.version, currentVersion(context)) && info.apkUrl != null;
                 main.post(() -> callback.onResult(newer ? info : null, null));
             } catch (Exception e) {
                 main.post(() -> callback.onResult(null, e.getMessage()));
             }
         }).start();
+    }
+
+    /** Controllo sincrono per il worker in background: aggiornamento disponibile o null. */
+    public static UpdateInfo checkSync(Context context) {
+        try {
+            UpdateInfo info = fetchLatest(context);
+            boolean newer = isNewer(info.version, currentVersion(context)) && info.apkUrl != null;
+            return newer ? info : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static UpdateInfo fetchLatest(Context context) throws Exception {
+        HttpURLConnection conn = (HttpURLConnection) new URL(API_LATEST).openConnection();
+        conn.setRequestProperty("Accept", "application/vnd.github+json");
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(10000);
+        int code = conn.getResponseCode();
+        if (code != 200) {
+            conn.disconnect();
+            throw new Exception(code == 404
+                    ? context.getString(R.string.nessuna_release) : "HTTP " + code);
+        }
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            String line;
+            while ((line = r.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        conn.disconnect();
+        JSONObject o = new JSONObject(sb.toString());
+        UpdateInfo info = new UpdateInfo();
+        info.version = o.optString("tag_name", "").replaceFirst("^v", "");
+        info.changelog = o.optString("body", "");
+        JSONArray assets = o.optJSONArray("assets");
+        if (assets != null) {
+            for (int i = 0; i < assets.length(); i++) {
+                JSONObject a = assets.getJSONObject(i);
+                if (a.optString("name", "").endsWith(".apk")) {
+                    info.apkUrl = a.optString("browser_download_url");
+                    break;
+                }
+            }
+        }
+        return info;
     }
 
     static boolean isNewer(String remote, String local) {

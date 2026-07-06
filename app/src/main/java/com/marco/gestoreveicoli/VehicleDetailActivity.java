@@ -36,6 +36,19 @@ public class VehicleDetailActivity extends AppCompatActivity {
     private TextView emptyView;
     private ImageView fotoView;
 
+    private final ActivityResultLauncher<String> pdfLauncher =
+            registerForActivityResult(new ActivityResultContracts.CreateDocument("application/pdf"), uri -> {
+                if (uri != null) {
+                    try (java.io.OutputStream out = getContentResolver().openOutputStream(uri, "wt")) {
+                        PdfExporter.export(this, vehicle, out);
+                        Toast.makeText(this, R.string.pdf_salvato, Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(this, getString(R.string.errore_generico, e.getMessage()),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
     private final ActivityResultLauncher<String> photoLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri != null) {
@@ -233,6 +246,9 @@ public class VehicleDetailActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_edit) {
             VehicleDialog.show(this, storage, vehicle, this::refresh);
+            return true;
+        } else if (id == R.id.action_pdf) {
+            pdfLauncher.launch("LanBrumBrum_" + vehicle.targa.replaceAll("[^A-Za-z0-9]", "") + ".pdf");
             return true;
         } else if (id == R.id.action_delete) {
             new MaterialAlertDialogBuilder(this)

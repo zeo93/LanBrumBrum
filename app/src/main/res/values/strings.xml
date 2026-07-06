@@ -48,7 +48,7 @@
     <string name="notifica_in_scadenza">%1$s scade tra %2$d giorni (%3$s)</string>
     <string name="notifica_aggiornamento">Nuova versione %1$s disponibile: tocca per aggiornare</string>
     <string name="dati">Dati</string>
-    <string name="dati_desc">Esporta i veicoli in un file di backup o importali su un altro telefono.</string>
+    <string name="dati_desc">Esporta un backup completo (dati e foto) in un file ZIP, o importalo su un altro telefono. Sono supportati anche i vecchi backup JSON.</string>
     <string name="esporta_dati">Esporta</string>
     <string name="importa_dati">Importa</string>
     <string name="importa">Importa</string>
@@ -97,4 +97,11 @@
     <string name="disclaimer">LanBrumBrum è stata pensata e creata da Marco Lanuti.\nPer qualsiasi feedback o suggerimento scrivi a:</string>
     <string name="email_feedback">admin@lanutimarco.com</string>
     <string name="oggetto_feedback">Feedback LanBrumBrum</string>
+    <string name="esporta_pdf">Esporta PDF</string>
+    <string name="pdf_salvato">PDF della scheda veicolo salvato</string>
+    <string name="pdf_intestazione">LanBrumBrum — Scheda veicolo</string>
+    <string name="pdf_immatricolazione">Immatricolazione</string>
+    <string name="pdf_storico">Storico manutenzioni (%1$d)</string>
+    <string name="pdf_nessuna_manutenzione">Nessuna manutenzione registrata.</string>
+    <string name="pdf_totale">Spesa totale: %1$s</string>
 </resources>
