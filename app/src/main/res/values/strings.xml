@@ -82,4 +82,10 @@
     <string name="scegli_galleria">Scegli dalla galleria</string>
     <string name="ricerca_foto">Ricerca foto di %1$s…</string>
     <string name="foto_non_trovata">Nessuna foto trovata per questo modello: prova dalla galleria</string>
+    <string name="immatricolazione">Immatricolazione (opzionale)</string>
+    <string name="immatricolata_il">Immatricolata il %1$s</string>
+    <string name="revisione_entro">🔧 Revisione entro il %1$s</string>
+    <string name="bollo_entro">💶 Bollo entro il %1$s</string>
+    <string name="tipo_revisione">Revisione</string>
+    <string name="tipo_bollo">Bollo</string>
 </resources>

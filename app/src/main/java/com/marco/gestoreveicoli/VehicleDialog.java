@@ -1,6 +1,7 @@
 package com.marco.gestoreveicoli;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,6 +12,9 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 /** Dialog condiviso per creare/modificare un veicolo, con tendine marca/modello. */
 public class VehicleDialog {
 
@@ -20,7 +24,20 @@ public class VehicleDialog {
         AutoCompleteTextView inMarca = view.findViewById(R.id.inputMarca);
         AutoCompleteTextView inModello = view.findViewById(R.id.inputModello);
         TextInputEditText inProprietario = view.findViewById(R.id.inputProprietario);
+        TextInputEditText inImmatricolazione = view.findViewById(R.id.inputImmatricolazione);
         TextInputEditText inKm = view.findViewById(R.id.inputKm);
+
+        inImmatricolazione.setOnClickListener(v -> {
+            Calendar c = Calendar.getInstance();
+            Calendar current = Vehicle.parseData(
+                    inImmatricolazione.getText() == null ? "" : inImmatricolazione.getText().toString());
+            if (current != null) {
+                c = current;
+            }
+            new DatePickerDialog(activity, (picker, year, month, day) ->
+                    inImmatricolazione.setText(String.format(Locale.ITALY, "%02d/%02d/%04d", day, month + 1, year)),
+                    c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        });
 
         inMarca.setAdapter(new ArrayAdapter<>(activity,
                 android.R.layout.simple_list_item_1, CarData.marche()));
@@ -42,6 +59,7 @@ public class VehicleDialog {
             inMarca.setText(existing.marca);
             inModello.setText(existing.modello);
             inProprietario.setText(existing.proprietario);
+            inImmatricolazione.setText(existing.immatricolazione);
             inKm.setText(String.valueOf(existing.km));
         }
         updateModelli.run();
@@ -74,6 +92,7 @@ public class VehicleDialog {
             v.marca = marca;
             v.modello = modello;
             v.proprietario = MainActivity.text(inProprietario);
+            v.immatricolazione = MainActivity.text(inImmatricolazione);
             v.km = MainActivity.parseLong(MainActivity.text(inKm));
             if (existing == null) {
                 storage.vehicles().add(v);

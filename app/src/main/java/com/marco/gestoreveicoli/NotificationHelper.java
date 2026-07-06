@@ -64,27 +64,42 @@ public class NotificationHelper {
         int notifId = 1000;
         for (Vehicle v : Storage.get(c).vehicles()) {
             for (Maintenance m : v.manutenzioni) {
-                if (m.scadenza == null || m.scadenza.isEmpty()) {
-                    continue;
-                }
-                long due = parseDateMillis(m.scadenza);
-                if (due <= 0) {
-                    continue;
-                }
-                long giorni = (due - oggi) / (24L * 3600 * 1000);
-                if (giorni <= preavviso) {
-                    String testo;
-                    if (giorni < 0) {
-                        testo = c.getString(R.string.notifica_scaduta, m.tipo, m.scadenza);
-                    } else if (giorni == 0) {
-                        testo = c.getString(R.string.notifica_scade_oggi, m.tipo);
-                    } else {
-                        testo = c.getString(R.string.notifica_in_scadenza, m.tipo, (int) giorni, m.scadenza);
-                    }
-                    notify(c, notifId++, v.targa + " · " + v.marcaModello(), testo);
+                if (m.scadenza != null && !m.scadenza.isEmpty()) {
+                    notifId = notifyIfDue(c, notifId, v, m.tipo, m.scadenza, oggi, preavviso);
                 }
             }
+            // scadenze automatiche da data di immatricolazione
+            String rev = v.prossimaRevisione();
+            if (rev != null) {
+                notifId = notifyIfDue(c, notifId, v, c.getString(R.string.tipo_revisione), rev, oggi, preavviso);
+            }
+            String bollo = v.prossimoBollo();
+            if (bollo != null) {
+                notifId = notifyIfDue(c, notifId, v, c.getString(R.string.tipo_bollo), bollo, oggi, preavviso);
+            }
         }
+    }
+
+    private static int notifyIfDue(Context c, int notifId, Vehicle v,
+                                   String tipo, String scadenza, long oggi, int preavviso) {
+        long due = parseDateMillis(scadenza);
+        if (due <= 0) {
+            return notifId;
+        }
+        long giorni = (due - oggi) / (24L * 3600 * 1000);
+        if (giorni > preavviso) {
+            return notifId;
+        }
+        String testo;
+        if (giorni < 0) {
+            testo = c.getString(R.string.notifica_scaduta, tipo, scadenza);
+        } else if (giorni == 0) {
+            testo = c.getString(R.string.notifica_scade_oggi, tipo);
+        } else {
+            testo = c.getString(R.string.notifica_in_scadenza, tipo, (int) giorni, scadenza);
+        }
+        notify(c, notifId, v.targa + " · " + v.marcaModello(), testo);
+        return notifId + 1;
     }
 
     private static void notify(Context c, int id, String title, String text) {

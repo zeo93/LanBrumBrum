@@ -170,6 +170,19 @@ public class VehicleDetailActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.detailModello)).setText(vehicle.marcaModello());
         ((TextView) findViewById(R.id.detailProprietario)).setText(
                 vehicle.proprietario.isEmpty() ? getString(R.string.nessun_proprietario) : vehicle.proprietario);
+
+        TextView imm = findViewById(R.id.detailImmatricolazione);
+        TextView rev = findViewById(R.id.detailRevisione);
+        TextView bollo = findViewById(R.id.detailBollo);
+        boolean hasImm = vehicle.immatricolazione != null && !vehicle.immatricolazione.isEmpty();
+        imm.setVisibility(hasImm ? View.VISIBLE : View.GONE);
+        rev.setVisibility(hasImm ? View.VISIBLE : View.GONE);
+        bollo.setVisibility(hasImm ? View.VISIBLE : View.GONE);
+        if (hasImm) {
+            imm.setText(getString(R.string.immatricolata_il, vehicle.immatricolazione));
+            rev.setText(getString(R.string.revisione_entro, vehicle.prossimaRevisione()));
+            bollo.setText(getString(R.string.bollo_entro, vehicle.prossimoBollo()));
+        }
         ((TextView) findViewById(R.id.detailKm)).setText(String.format(Locale.ITALY, "%,d km", vehicle.km));
         ((TextView) findViewById(R.id.detailSpese)).setText(
                 String.format(Locale.ITALY, "€ %,.2f", vehicle.totaleSpese()));
