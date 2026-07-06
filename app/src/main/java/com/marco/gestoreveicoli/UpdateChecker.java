@@ -29,7 +29,7 @@ import java.net.URL;
 public class UpdateChecker {
 
     /** Repository GitHub da cui vengono pubblicate le release. */
-    public static final String REPO = "lanutimarco/GestoreVeicoli";
+    public static final String REPO = "zeo93/LanBrumBrum";
     private static final String API_LATEST = "https://api.github.com/repos/" + REPO + "/releases/latest";
 
     public static class UpdateInfo {

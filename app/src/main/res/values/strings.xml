@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Gestore Veicoli</string>
+    <string name="app_name">LanBrumBrum</string>
     <string name="nessun_veicolo">Nessun veicolo.\nTocca + per aggiungere il primo veicolo.</string>
     <string name="nessuna_manutenzione">Nessuna manutenzione registrata.\nTocca + per aggiungerne una.</string>
     <string name="nuovo_veicolo">Nuovo veicolo</string>
