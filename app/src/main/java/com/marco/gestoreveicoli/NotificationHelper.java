@@ -77,6 +77,13 @@ public class NotificationHelper {
             if (bollo != null) {
                 notifId = notifyIfDue(c, notifId, v, c.getString(R.string.tipo_bollo), bollo, oggi, preavviso);
             }
+            if (v.assicurazioneScadenza != null && !v.assicurazioneScadenza.isEmpty()) {
+                String tipo = c.getString(R.string.tipo_assicurazione);
+                if (v.assicurazioneCompagnia != null && !v.assicurazioneCompagnia.trim().isEmpty()) {
+                    tipo += " (" + v.assicurazioneCompagnia.trim() + ")";
+                }
+                notifId = notifyIfDue(c, notifId, v, tipo, v.assicurazioneScadenza, oggi, preavviso);
+            }
         }
     }
 

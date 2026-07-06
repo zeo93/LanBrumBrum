@@ -25,19 +25,12 @@ public class VehicleDialog {
         AutoCompleteTextView inModello = view.findViewById(R.id.inputModello);
         TextInputEditText inProprietario = view.findViewById(R.id.inputProprietario);
         TextInputEditText inImmatricolazione = view.findViewById(R.id.inputImmatricolazione);
+        TextInputEditText inCompagnia = view.findViewById(R.id.inputCompagnia);
+        TextInputEditText inScadAssicurazione = view.findViewById(R.id.inputScadenzaAssicurazione);
         TextInputEditText inKm = view.findViewById(R.id.inputKm);
 
-        inImmatricolazione.setOnClickListener(v -> {
-            Calendar c = Calendar.getInstance();
-            Calendar current = Vehicle.parseData(
-                    inImmatricolazione.getText() == null ? "" : inImmatricolazione.getText().toString());
-            if (current != null) {
-                c = current;
-            }
-            new DatePickerDialog(activity, (picker, year, month, day) ->
-                    inImmatricolazione.setText(String.format(Locale.ITALY, "%02d/%02d/%04d", day, month + 1, year)),
-                    c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
-        });
+        inImmatricolazione.setOnClickListener(v -> pickDate(activity, inImmatricolazione));
+        inScadAssicurazione.setOnClickListener(v -> pickDate(activity, inScadAssicurazione));
 
         inMarca.setAdapter(new ArrayAdapter<>(activity,
                 android.R.layout.simple_list_item_1, CarData.marche()));
@@ -60,6 +53,8 @@ public class VehicleDialog {
             inModello.setText(existing.modello);
             inProprietario.setText(existing.proprietario);
             inImmatricolazione.setText(existing.immatricolazione);
+            inCompagnia.setText(existing.assicurazioneCompagnia);
+            inScadAssicurazione.setText(existing.assicurazioneScadenza);
             inKm.setText(String.valueOf(existing.km));
         }
         updateModelli.run();
@@ -93,6 +88,8 @@ public class VehicleDialog {
             v.modello = modello;
             v.proprietario = MainActivity.text(inProprietario);
             v.immatricolazione = MainActivity.text(inImmatricolazione);
+            v.assicurazioneCompagnia = MainActivity.text(inCompagnia);
+            v.assicurazioneScadenza = MainActivity.text(inScadAssicurazione);
             v.km = MainActivity.parseLong(MainActivity.text(inKm));
             if (existing == null) {
                 storage.vehicles().add(v);
@@ -104,5 +101,17 @@ public class VehicleDialog {
             dialog.dismiss();
         }));
         dialog.show();
+    }
+
+    private static void pickDate(Activity activity, TextInputEditText field) {
+        Calendar c = Calendar.getInstance();
+        Calendar current = Vehicle.parseData(
+                field.getText() == null ? "" : field.getText().toString());
+        if (current != null) {
+            c = current;
+        }
+        new DatePickerDialog(activity, (picker, year, month, day) ->
+                field.setText(String.format(Locale.ITALY, "%02d/%02d/%04d", day, month + 1, year)),
+                c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
     }
 }

@@ -183,6 +183,22 @@ public class VehicleDetailActivity extends AppCompatActivity {
             rev.setText(getString(R.string.revisione_entro, vehicle.prossimaRevisione()));
             bollo.setText(getString(R.string.bollo_entro, vehicle.prossimoBollo()));
         }
+
+        TextView assic = findViewById(R.id.detailAssicurazione);
+        boolean hasAssic = vehicle.assicurazioneScadenza != null && !vehicle.assicurazioneScadenza.isEmpty();
+        assic.setVisibility(hasAssic ? View.VISIBLE : View.GONE);
+        if (hasAssic) {
+            String compagnia = vehicle.assicurazioneCompagnia == null ? "" : vehicle.assicurazioneCompagnia.trim();
+            boolean scaduta = vehicle.assicurazioneScaduta();
+            String testo = scaduta
+                    ? getString(R.string.assicurazione_scaduta_il, vehicle.assicurazioneScadenza)
+                    : getString(R.string.assicurazione_entro, vehicle.assicurazioneScadenza);
+            if (!compagnia.isEmpty()) {
+                testo += " · " + compagnia;
+            }
+            assic.setText(testo);
+            assic.setTextColor(scaduta ? 0xFFC62828 : bollo.getCurrentTextColor());
+        }
         ((TextView) findViewById(R.id.detailKm)).setText(String.format(Locale.ITALY, "%,d km", vehicle.km));
         ((TextView) findViewById(R.id.detailSpese)).setText(
                 String.format(Locale.ITALY, "€ %,.2f", vehicle.totaleSpese()));

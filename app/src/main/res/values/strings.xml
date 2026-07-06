@@ -88,4 +88,9 @@
     <string name="bollo_entro">💶 Bollo entro il %1$s</string>
     <string name="tipo_revisione">Revisione</string>
     <string name="tipo_bollo">Bollo</string>
+    <string name="tipo_assicurazione">Assicurazione</string>
+    <string name="assicurazione_compagnia">Compagnia assicurativa (opzionale)</string>
+    <string name="assicurazione_scadenza">Scadenza assicurazione (opzionale)</string>
+    <string name="assicurazione_entro">🛡️ Assicurazione entro il %1$s</string>
+    <string name="assicurazione_scaduta_il">🛡️ Assicurazione SCADUTA il %1$s</string>
 </resources>

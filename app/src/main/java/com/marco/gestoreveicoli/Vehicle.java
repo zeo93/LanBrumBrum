@@ -17,6 +17,8 @@ public class Vehicle {
     public String modello;
     public String proprietario;
     public String immatricolazione; // gg/mm/aaaa, opzionale
+    public String assicurazioneCompagnia; // opzionale
+    public String assicurazioneScadenza;  // gg/mm/aaaa, opzionale
     public long km;
     public List<Maintenance> manutenzioni = new ArrayList<>();
 
@@ -32,6 +34,8 @@ public class Vehicle {
         o.put("modello", modello);
         o.put("proprietario", proprietario);
         o.put("immatricolazione", immatricolazione == null ? "" : immatricolazione);
+        o.put("assicurazioneCompagnia", assicurazioneCompagnia == null ? "" : assicurazioneCompagnia);
+        o.put("assicurazioneScadenza", assicurazioneScadenza == null ? "" : assicurazioneScadenza);
         o.put("km", km);
         JSONArray arr = new JSONArray();
         for (Maintenance m : manutenzioni) {
@@ -49,6 +53,8 @@ public class Vehicle {
         v.modello = o.optString("modello", "");
         v.proprietario = o.optString("proprietario", "");
         v.immatricolazione = o.optString("immatricolazione", "");
+        v.assicurazioneCompagnia = o.optString("assicurazioneCompagnia", "");
+        v.assicurazioneScadenza = o.optString("assicurazioneScadenza", "");
         v.km = o.optLong("km", 0);
         JSONArray arr = o.optJSONArray("manutenzioni");
         if (arr != null) {
@@ -113,6 +119,20 @@ public class Vehicle {
             fineMese(due);
         }
         return formatta(due);
+    }
+
+    /** True se la scadenza dell'assicurazione è passata. */
+    public boolean assicurazioneScaduta() {
+        Calendar due = parseData(assicurazioneScadenza == null ? "" : assicurazioneScadenza);
+        if (due == null) {
+            return false;
+        }
+        Calendar oggi = Calendar.getInstance();
+        oggi.set(Calendar.HOUR_OF_DAY, 0);
+        oggi.set(Calendar.MINUTE, 0);
+        oggi.set(Calendar.SECOND, 0);
+        oggi.set(Calendar.MILLISECOND, 0);
+        return due.before(oggi);
     }
 
     static Calendar parseData(String d) {
