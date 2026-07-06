@@ -8,4 +8,9 @@
         <item name="colorSecondary">#546E7A</item>
         <item name="android:statusBarColor">#0D47A1</item>
     </style>
+
+    <style name="FotoArrotondata">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
 </resources>

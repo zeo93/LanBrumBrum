@@ -1,6 +1,7 @@
 package com.marco.gestoreveicoli;
 
 import android.app.DatePickerDialog;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -8,8 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +34,18 @@ public class VehicleDetailActivity extends AppCompatActivity {
     private Vehicle vehicle;
     private MaintenanceAdapter adapter;
     private TextView emptyView;
+    private ImageView fotoView;
+
+    private final ActivityResultLauncher<String> photoLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    if (PhotoStore.save(this, vehicle.id, uri)) {
+                        refresh();
+                    } else {
+                        Toast.makeText(this, R.string.foto_errore, Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +62,23 @@ public class VehicleDetailActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        fotoView = findViewById(R.id.detailFoto);
+        fotoView.setOnClickListener(v -> photoLauncher.launch("image/*"));
+        fotoView.setOnLongClickListener(v -> {
+            if (PhotoStore.has(this, vehicle.id)) {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle(R.string.rimuovi_foto)
+                        .setMessage(R.string.conferma_rimuovi_foto)
+                        .setPositiveButton(R.string.elimina, (d, w) -> {
+                            PhotoStore.delete(this, vehicle.id);
+                            refresh();
+                        })
+                        .setNegativeButton(R.string.annulla, null)
+                        .show();
+            }
+            return true;
+        });
 
         emptyView = findViewById(R.id.emptyMaintenance);
         RecyclerView list = findViewById(R.id.maintenanceList);
@@ -70,6 +104,14 @@ public class VehicleDetailActivity extends AppCompatActivity {
 
     private void refresh() {
         setTitle(vehicle.targa);
+        Bitmap foto = PhotoStore.load(this, vehicle.id, 1280);
+        if (foto != null) {
+            fotoView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            fotoView.setImageBitmap(foto);
+        } else {
+            fotoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            fotoView.setImageResource(R.drawable.ic_car);
+        }
         ((TextView) findViewById(R.id.detailModello)).setText(vehicle.marcaModello());
         ((TextView) findViewById(R.id.detailProprietario)).setText(
                 vehicle.proprietario.isEmpty() ? getString(R.string.nessun_proprietario) : vehicle.proprietario);
@@ -113,6 +155,7 @@ public class VehicleDetailActivity extends AppCompatActivity {
                     .setTitle(R.string.elimina_veicolo)
                     .setMessage(getString(R.string.conferma_elimina_veicolo, vehicle.targa))
                     .setPositiveButton(R.string.elimina, (d, w) -> {
+                        PhotoStore.delete(this, vehicle.id);
                         storage.delete(vehicle);
                         finish();
                     })

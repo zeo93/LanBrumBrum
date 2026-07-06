@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(R.string.elimina_veicolo)
                 .setMessage(getString(R.string.conferma_elimina_veicolo, v.targa))
                 .setPositiveButton(R.string.elimina, (d, w) -> {
+                    PhotoStore.delete(this, v.id);
                     storage.delete(v);
                     refresh();
                 })

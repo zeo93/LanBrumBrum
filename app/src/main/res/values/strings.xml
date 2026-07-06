@@ -73,4 +73,9 @@
     <string name="attendere">Attendere…</string>
     <string name="errore">Errore</string>
     <string name="errore_download">Download non riuscito: %1$s</string>
+    <string name="foto_veicolo">Foto del veicolo</string>
+    <string name="foto_hint">Tocca la foto per aggiungerla o cambiarla, tienila premuta per rimuoverla</string>
+    <string name="rimuovi_foto">Rimuovi foto</string>
+    <string name="conferma_rimuovi_foto">Rimuovere la foto del veicolo?</string>
+    <string name="foto_errore">Impossibile caricare l\'immagine</string>
 </resources>
