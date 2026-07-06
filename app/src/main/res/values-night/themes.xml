@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GestoreVeicoli" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#A9C7FF</item>
+        <item name="colorOnPrimary">#003063</item>
+        <item name="colorPrimaryContainer">#1D4B8F</item>
+        <item name="colorOnPrimaryContainer">#D8E6FF</item>
+        <item name="colorSecondary">#B0BEC5</item>
+        <item name="android:statusBarColor">@color/status_bar</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

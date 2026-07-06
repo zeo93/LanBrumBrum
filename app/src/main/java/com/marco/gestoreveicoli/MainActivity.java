@@ -12,19 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class MainActivity extends AppCompatActivity {
 
     private Storage storage;
     private VehicleAdapter adapter;
-    private TextView emptyView;
+    private View emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         storage = Storage.get(this);
         emptyView = findViewById(R.id.emptyView);
@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         });
         list.setAdapter(adapter);
 
-        FloatingActionButton fab = findViewById(R.id.fabAddVehicle);
-        fab.setOnClickListener(view -> VehicleDialog.show(this, storage, null, this::refresh));
+        findViewById(R.id.fabAddVehicle)
+                .setOnClickListener(view -> VehicleDialog.show(this, storage, null, this::refresh));
 
         NotificationHelper.ensureChannels(this);
         DailyWorker.schedule(this);

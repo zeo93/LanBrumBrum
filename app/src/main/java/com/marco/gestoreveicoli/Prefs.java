@@ -26,4 +26,13 @@ public class Prefs {
     public static void setGiorniPreavviso(Context c, int giorni) {
         p(c).edit().putInt("giorni_preavviso", giorni).apply();
     }
+
+    /** 0 = segui il sistema, 1 = chiaro, 2 = scuro. */
+    public static int tema(Context c) {
+        return p(c).getInt("tema", 0);
+    }
+
+    public static void setTema(Context c, int tema) {
+        p(c).edit().putInt("tema", tema).apply();
+    }
 }

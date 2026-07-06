@@ -63,11 +63,30 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        setSupportActionBar(findViewById(R.id.toolbar));
         setTitle(R.string.impostazioni);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         storage = Storage.get(this);
+
+        // --- Aspetto ---
+        com.google.android.material.button.MaterialButtonToggleGroup gruppoTema =
+                findViewById(R.id.gruppoTema);
+        int tema = Prefs.tema(this);
+        gruppoTema.check(tema == 1 ? R.id.btnTemaChiaro
+                : tema == 2 ? R.id.btnTemaScuro : R.id.btnTemaSistema);
+        gruppoTema.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
+            }
+            int nuovo = checkedId == R.id.btnTemaChiaro ? 1
+                    : checkedId == R.id.btnTemaScuro ? 2 : 0;
+            if (nuovo != Prefs.tema(this)) {
+                Prefs.setTema(this, nuovo);
+                App.applicaTema(nuovo);
+            }
+        });
 
         // --- Notifiche ---
         switchNotifiche = findViewById(R.id.switchNotifiche);

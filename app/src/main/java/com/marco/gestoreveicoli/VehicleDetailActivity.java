@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
@@ -72,6 +71,7 @@ public class VehicleDetailActivity extends AppCompatActivity {
             return;
         }
 
+        setSupportActionBar(findViewById(R.id.toolbar));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -109,8 +109,8 @@ public class VehicleDetailActivity extends AppCompatActivity {
         });
         list.setAdapter(adapter);
 
-        FloatingActionButton fab = findViewById(R.id.fabAddMaintenance);
-        fab.setOnClickListener(v -> showMaintenanceDialog(null));
+        findViewById(R.id.fabAddMaintenance)
+                .setOnClickListener(v -> showMaintenanceDialog(null));
 
         refresh();
     }
