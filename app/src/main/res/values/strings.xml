@@ -93,4 +93,8 @@
     <string name="assicurazione_scadenza">Scadenza assicurazione (opzionale)</string>
     <string name="assicurazione_entro">🛡️ Assicurazione entro il %1$s</string>
     <string name="assicurazione_scaduta_il">🛡️ Assicurazione SCADUTA il %1$s</string>
+    <string name="informazioni">Informazioni</string>
+    <string name="disclaimer">LanBrumBrum è stata pensata e creata da Marco Lanuti.\nPer qualsiasi feedback o suggerimento scrivi a:</string>
+    <string name="email_feedback">admin@lanutimarco.com</string>
+    <string name="oggetto_feedback">Feedback LanBrumBrum</string>
 </resources>

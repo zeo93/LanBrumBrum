@@ -132,6 +132,20 @@ public class SettingsActivity extends AppCompatActivity {
         versione.setText(getString(R.string.versione_installata, UpdateChecker.currentVersion(this)));
         updateStatus = findViewById(R.id.textUpdateStatus);
 
+        // --- Informazioni / feedback ---
+        TextView email = findViewById(R.id.textEmailFeedback);
+        email.setOnClickListener(v -> {
+            try {
+                android.content.Intent send = new android.content.Intent(android.content.Intent.ACTION_SENDTO,
+                        android.net.Uri.parse("mailto:" + getString(R.string.email_feedback)));
+                send.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                        getString(R.string.oggetto_feedback) + " v" + UpdateChecker.currentVersion(this));
+                startActivity(send);
+            } catch (Exception e) {
+                Toast.makeText(this, R.string.email_feedback, Toast.LENGTH_LONG).show();
+            }
+        });
+
         Button check = findViewById(R.id.btnCercaAggiornamenti);
         check.setOnClickListener(v -> {
             updateStatus.setText(R.string.ricerca_in_corso);
