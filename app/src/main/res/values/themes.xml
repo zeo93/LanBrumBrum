@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GestoreVeicoli" parent="Theme.Material3.DayNight">
+        <item name="colorPrimary">#1565C0</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#D3E4FF</item>
+        <item name="colorOnPrimaryContainer">#001C3B</item>
+        <item name="colorSecondary">#546E7A</item>
+        <item name="android:statusBarColor">#0D47A1</item>
+    </style>
+</resources>

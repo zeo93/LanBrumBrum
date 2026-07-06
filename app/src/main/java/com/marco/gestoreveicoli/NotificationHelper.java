@@ -1,0 +1,146 @@
+package com.marco.gestoreveicoli;
+
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import java.util.Calendar;
+import java.util.Locale;
+
+public class NotificationHelper {
+
+    public static final String CHANNEL_SCADENZE = "scadenze";
+    public static final String CHANNEL_UPDATES = "aggiornamenti";
+
+    public static void ensureChannels(Context c) {
+        NotificationManager nm = c.getSystemService(NotificationManager.class);
+        NotificationChannel scadenze = new NotificationChannel(CHANNEL_SCADENZE,
+                c.getString(R.string.canale_scadenze), NotificationManager.IMPORTANCE_DEFAULT);
+        scadenze.setDescription(c.getString(R.string.canale_scadenze_desc));
+        nm.createNotificationChannel(scadenze);
+        NotificationChannel updates = new NotificationChannel(CHANNEL_UPDATES,
+                c.getString(R.string.canale_aggiornamenti), NotificationManager.IMPORTANCE_DEFAULT);
+        nm.createNotificationChannel(updates);
+    }
+
+    /** Controllo giornaliero delle scadenze intorno alle 9:00. */
+    public static void scheduleDaily(Context c) {
+        AlarmManager am = c.getSystemService(AlarmManager.class);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 9);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, dailyIntent(c));
+    }
+
+    public static void cancelDaily(Context c) {
+        AlarmManager am = c.getSystemService(AlarmManager.class);
+        am.cancel(dailyIntent(c));
+    }
+
+    private static PendingIntent dailyIntent(Context c) {
+        return PendingIntent.getBroadcast(c, 100,
+                new Intent(c, NotificationReceiver.class),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    /** Notifica le manutenzioni con scadenza entro i giorni di preavviso (o già scadute). */
+    public static void checkScadenze(Context c) {
+        if (!NotificationManagerCompat.from(c).areNotificationsEnabled()) {
+            return;
+        }
+        int preavviso = Prefs.giorniPreavviso(c);
+        long oggi = today();
+        int notifId = 1000;
+        for (Vehicle v : Storage.get(c).vehicles()) {
+            for (Maintenance m : v.manutenzioni) {
+                if (m.scadenza == null || m.scadenza.isEmpty()) {
+                    continue;
+                }
+                long due = parseDateMillis(m.scadenza);
+                if (due <= 0) {
+                    continue;
+                }
+                long giorni = (due - oggi) / (24L * 3600 * 1000);
+                if (giorni <= preavviso) {
+                    String testo;
+                    if (giorni < 0) {
+                        testo = c.getString(R.string.notifica_scaduta, m.tipo, m.scadenza);
+                    } else if (giorni == 0) {
+                        testo = c.getString(R.string.notifica_scade_oggi, m.tipo);
+                    } else {
+                        testo = c.getString(R.string.notifica_in_scadenza, m.tipo, (int) giorni, m.scadenza);
+                    }
+                    notify(c, notifId++, v.targa + " · " + v.marcaModello(), testo);
+                }
+            }
+        }
+    }
+
+    private static void notify(Context c, int id, String title, String text) {
+        Intent open = new Intent(c, MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(c, id, open,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(c, CHANNEL_SCADENZE)
+                .setSmallIcon(R.drawable.ic_launcher_fg)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentIntent(pi)
+                .setAutoCancel(true);
+        try {
+            NotificationManagerCompat.from(c).notify(id, b.build());
+        } catch (SecurityException ignored) {
+        }
+    }
+
+    public static void notifyUpdate(Context c, String version) {
+        if (!NotificationManagerCompat.from(c).areNotificationsEnabled()) {
+            return;
+        }
+        Intent open = new Intent(c, SettingsActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(c, 999, open,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(c, CHANNEL_UPDATES)
+                .setSmallIcon(R.drawable.ic_launcher_fg)
+                .setContentTitle(c.getString(R.string.app_name))
+                .setContentText(c.getString(R.string.notifica_aggiornamento, version))
+                .setContentIntent(pi)
+                .setAutoCancel(true);
+        try {
+            NotificationManagerCompat.from(c).notify(999, b.build());
+        } catch (SecurityException ignored) {
+        }
+    }
+
+    static long today() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+
+    static long parseDateMillis(String d) {
+        try {
+            String[] p = d.trim().split("/");
+            Calendar cal = Calendar.getInstance();
+            cal.set(Integer.parseInt(p[2]), Integer.parseInt(p[1]) - 1, Integer.parseInt(p[0]), 0, 0, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTimeInMillis();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+}

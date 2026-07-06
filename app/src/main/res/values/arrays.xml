@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tipi_manutenzione">
+        <item>Tagliando</item>
+        <item>Cambio olio</item>
+        <item>Filtri</item>
+        <item>Pneumatici</item>
+        <item>Freni</item>
+        <item>Batteria</item>
+        <item>Distribuzione</item>
+        <item>Frizione</item>
+        <item>Climatizzatore</item>
+        <item>Revisione</item>
+        <item>Assicurazione</item>
+        <item>Bollo</item>
+        <item>Carrozzeria</item>
+        <item>Riparazione</item>
+        <item>Altro</item>
+    </string-array>
+    <plurals name="num_manutenzioni">
+        <item quantity="one">%d manutenzione</item>
+        <item quantity="other">%d manutenzioni</item>
+    </plurals>
+</resources>
