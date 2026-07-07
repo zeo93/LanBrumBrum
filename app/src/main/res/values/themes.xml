@@ -1,18 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.GestoreVeicoli" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Base comune (font + statusbar); i colori stanno nelle varianti chiara/scura -->
+    <style name="Base.Theme.GestoreVeicoli" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+        <item name="android:statusBarColor">@color/status_bar</item>
+
+        <item name="textAppearanceDisplayLarge">@style/Font.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/Font.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/Font.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/Font.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/Font.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/Font.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/Font.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/Font.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/Font.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/Font.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/Font.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/Font.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/Font.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/Font.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/Font.LabelSmall</item>
+    </style>
+
+    <style name="Theme.GestoreVeicoli" parent="Base.Theme.GestoreVeicoli">
         <item name="colorPrimary">#1A73E8</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorPrimaryContainer">#D8E6FF</item>
         <item name="colorOnPrimaryContainer">#062E6F</item>
         <item name="colorSecondary">#546E7A</item>
         <item name="colorTertiary">@color/rosso_ferrari</item>
-        <item name="android:statusBarColor">@color/status_bar</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="FotoArrotondata">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">14dp</item>
+    </style>
+
+    <!-- Stili tipografici Material 3 con il font Naowh -->
+    <style name="Font.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
+    </style>
+    <style name="Font.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/naowh</item>
+        <item name="fontFamily">@font/naowh</item>
     </style>
 </resources>
