@@ -136,7 +136,7 @@ public class SettingsActivity extends AppCompatActivity {
         // --- Dati ---
         Button export = findViewById(R.id.btnEsporta);
         export.setOnClickListener(v -> {
-            String name = "lanbrumbrum_backup_" +
+            String name = "lancare_backup_" +
                     new SimpleDateFormat("yyyyMMdd", Locale.ITALY).format(new Date()) + ".zip";
             exportLauncher.launch(name);
         });

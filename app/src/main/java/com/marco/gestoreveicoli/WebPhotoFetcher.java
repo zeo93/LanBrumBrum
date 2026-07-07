@@ -19,7 +19,7 @@ import java.util.Iterator;
 /** Cerca su Wikipedia la foto principale del modello (es. "Fiat Panda") e la scarica. */
 public class WebPhotoFetcher {
 
-    private static final String UA = "LanBrumBrum/1.0 (app gestione veicoli)";
+    private static final String UA = "LanCare/1.0 (app gestione veicoli)";
 
     public interface Callback {
         /** file != null se trovata; file == null ed error == null se nessun risultato. */

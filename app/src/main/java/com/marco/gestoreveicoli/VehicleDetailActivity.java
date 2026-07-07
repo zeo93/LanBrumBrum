@@ -248,7 +248,7 @@ public class VehicleDetailActivity extends AppCompatActivity {
             VehicleDialog.show(this, storage, vehicle, this::refresh);
             return true;
         } else if (id == R.id.action_pdf) {
-            pdfLauncher.launch("LanBrumBrum_" + vehicle.targa.replaceAll("[^A-Za-z0-9]", "") + ".pdf");
+            pdfLauncher.launch("LanCare_" + vehicle.targa.replaceAll("[^A-Za-z0-9]", "") + ".pdf");
             return true;
         } else if (id == R.id.action_delete) {
             new MaterialAlertDialogBuilder(this)

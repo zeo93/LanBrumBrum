@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="status_bar">#12131A</color>
+    <color name="rosso_ferrari">#F05545</color>
     <color name="targa_bg">#23262D</color>
     <color name="targa_border">#9AA3AF</color>
     <color name="targa_text">#ECEFF4</color>

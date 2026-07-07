@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">LanBrumBrum</string>
+    <string name="app_name">LanCare</string>
     <string name="nessun_veicolo">Nessun veicolo.\nTocca + per aggiungere il primo veicolo.</string>
     <string name="nessuna_manutenzione">Nessuna manutenzione registrata.\nTocca + per aggiungerne una.</string>
     <string name="nuovo_veicolo">Nuovo veicolo</string>
@@ -94,12 +94,12 @@
     <string name="assicurazione_entro">🛡️ Assicurazione entro il %1$s</string>
     <string name="assicurazione_scaduta_il">🛡️ Assicurazione SCADUTA il %1$s</string>
     <string name="informazioni">Informazioni</string>
-    <string name="disclaimer">LanBrumBrum è stata pensata e creata da Marco Lanuti.\nPer qualsiasi feedback o suggerimento scrivi a:</string>
+    <string name="disclaimer">LanCare è stata pensata e creata da Marco Lanuti.\nPer qualsiasi feedback o suggerimento scrivi a:</string>
     <string name="email_feedback">admin@lanutimarco.com</string>
-    <string name="oggetto_feedback">Feedback LanBrumBrum</string>
+    <string name="oggetto_feedback">Feedback LanCare</string>
     <string name="esporta_pdf">Esporta PDF</string>
     <string name="pdf_salvato">PDF della scheda veicolo salvato</string>
-    <string name="pdf_intestazione">LanBrumBrum — Scheda veicolo</string>
+    <string name="pdf_intestazione">LanCare — Scheda veicolo</string>
     <string name="pdf_immatricolazione">Immatricolazione</string>
     <string name="pdf_storico">Storico manutenzioni (%1$d)</string>
     <string name="pdf_nessuna_manutenzione">Nessuna manutenzione registrata.</string>

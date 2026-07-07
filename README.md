@@ -1,4 +1,4 @@
-# LanBrumBrum
+# LanCare
 
 App Android per gestire i veicoli di proprietà e le relative manutenzioni.
 Gli aggiornamenti vengono distribuiti tramite le release di questo repository e installati direttamente dall'app.

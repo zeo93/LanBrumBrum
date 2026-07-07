@@ -6,6 +6,7 @@
         <item name="colorPrimaryContainer">#D8E6FF</item>
         <item name="colorOnPrimaryContainer">#062E6F</item>
         <item name="colorSecondary">#546E7A</item>
+        <item name="colorTertiary">@color/rosso_ferrari</item>
         <item name="android:statusBarColor">@color/status_bar</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
