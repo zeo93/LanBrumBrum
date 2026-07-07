@@ -1,14 +1,12 @@
 package com.marco.gestoreveicoli;
 
-import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,23 +15,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Locale;
 
 public class VehicleDetailActivity extends AppCompatActivity {
 
     private Storage storage;
     private Vehicle vehicle;
-    private MaintenanceAdapter adapter;
-    private TextView emptyView;
     private ImageView fotoView;
+    private Button btnManutenzioni;
 
     private final ActivityResultLauncher<String> pdfLauncher =
             registerForActivityResult(new ActivityResultContracts.CreateDocument("application/pdf"), uri -> {
@@ -93,26 +85,22 @@ public class VehicleDetailActivity extends AppCompatActivity {
             return true;
         });
 
-        emptyView = findViewById(R.id.emptyMaintenance);
-        RecyclerView list = findViewById(R.id.maintenanceList);
-        list.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new MaintenanceAdapter(vehicle.manutenzioni, new MaintenanceAdapter.Listener() {
-            @Override
-            public void onClick(Maintenance m) {
-                showMaintenanceDialog(m);
-            }
-
-            @Override
-            public void onLongClick(Maintenance m) {
-                confirmDeleteMaintenance(m);
-            }
+        btnManutenzioni = findViewById(R.id.btnManutenzioni);
+        btnManutenzioni.setOnClickListener(v -> {
+            Intent i = new Intent(this, MaintenanceActivity.class);
+            i.putExtra("vehicle_id", vehicle.id);
+            startActivity(i);
         });
-        list.setAdapter(adapter);
-
-        findViewById(R.id.fabAddMaintenance)
-                .setOnClickListener(v -> showMaintenanceDialog(null));
 
         refresh();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (vehicle != null) {
+            refresh();
+        }
     }
 
     private void showPhotoOptions() {
@@ -172,6 +160,7 @@ public class VehicleDetailActivity extends AppCompatActivity {
 
     private void refresh() {
         setTitle(vehicle.targa);
+
         Bitmap foto = PhotoStore.load(this, vehicle.id, 1280);
         if (foto != null) {
             fotoView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -180,9 +169,13 @@ public class VehicleDetailActivity extends AppCompatActivity {
             fotoView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             fotoView.setImageResource(R.drawable.ic_car);
         }
+
         ((TextView) findViewById(R.id.detailModello)).setText(vehicle.marcaModello());
         ((TextView) findViewById(R.id.detailProprietario)).setText(
                 vehicle.proprietario.isEmpty() ? getString(R.string.nessun_proprietario) : vehicle.proprietario);
+        ((TextView) findViewById(R.id.detailKm)).setText(String.format(Locale.ITALY, "%,d km", vehicle.km));
+        ((TextView) findViewById(R.id.detailSpese)).setText(
+                String.format(Locale.ITALY, "€ %,.2f", vehicle.totaleSpese()));
 
         TextView imm = findViewById(R.id.detailImmatricolazione);
         TextView rev = findViewById(R.id.detailRevisione);
@@ -212,21 +205,8 @@ public class VehicleDetailActivity extends AppCompatActivity {
             assic.setText(testo);
             assic.setTextColor(scaduta ? 0xFFC62828 : bollo.getCurrentTextColor());
         }
-        ((TextView) findViewById(R.id.detailKm)).setText(String.format(Locale.ITALY, "%,d km", vehicle.km));
-        ((TextView) findViewById(R.id.detailSpese)).setText(
-                String.format(Locale.ITALY, "€ %,.2f", vehicle.totaleSpese()));
-        vehicle.manutenzioni.sort(Comparator.comparing((Maintenance m) -> parseDate(m.data)).reversed());
-        adapter.notifyDataSetChanged();
-        emptyView.setVisibility(vehicle.manutenzioni.isEmpty() ? View.VISIBLE : View.GONE);
-    }
 
-    static long parseDate(String d) {
-        try {
-            String[] p = d.split("/");
-            return Long.parseLong(p[2]) * 10000 + Long.parseLong(p[1]) * 100 + Long.parseLong(p[0]);
-        } catch (Exception e) {
-            return 0;
-        }
+        btnManutenzioni.setText(getString(R.string.apri_manutenzioni, vehicle.manutenzioni.size()));
     }
 
     @Override
@@ -242,7 +222,7 @@ public class VehicleDetailActivity extends AppCompatActivity {
             finish();
             return true;
         } else if (id == R.id.action_settings) {
-            startActivity(new android.content.Intent(this, SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_edit) {
             VehicleDialog.show(this, storage, vehicle, this::refresh);
@@ -264,106 +244,5 @@ public class VehicleDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void confirmDeleteMaintenance(Maintenance m) {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.elimina_manutenzione)
-                .setMessage(getString(R.string.conferma_elimina_manutenzione, m.tipo, m.data))
-                .setPositiveButton(R.string.elimina, (d, w) -> {
-                    vehicle.manutenzioni.remove(m);
-                    storage.save();
-                    refresh();
-                })
-                .setNegativeButton(R.string.annulla, null)
-                .show();
-    }
-
-    private void showMaintenanceDialog(Maintenance existing) {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_maintenance, null);
-        AutoCompleteTextView inTipo = view.findViewById(R.id.inputTipo);
-        TextInputEditText inData = view.findViewById(R.id.inputData);
-        TextInputEditText inKm = view.findViewById(R.id.inputKmManutenzione);
-        TextInputEditText inCosto = view.findViewById(R.id.inputCosto);
-        TextInputEditText inScadenza = view.findViewById(R.id.inputScadenza);
-        TextInputEditText inNote = view.findViewById(R.id.inputNote);
-
-        String[] tipi = getResources().getStringArray(R.array.tipi_manutenzione);
-        inTipo.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tipi));
-
-        inData.setOnClickListener(v -> pickDate(inData));
-        inScadenza.setOnClickListener(v -> pickDate(inScadenza));
-
-        if (existing != null) {
-            inTipo.setText(existing.tipo, false);
-            inData.setText(existing.data);
-            inKm.setText(String.valueOf(existing.km));
-            inCosto.setText(existing.costo == 0 ? "" : String.format(Locale.US, "%.2f", existing.costo));
-            inScadenza.setText(existing.scadenza);
-            inNote.setText(existing.note);
-        } else {
-            Calendar c = Calendar.getInstance();
-            inData.setText(String.format(Locale.ITALY, "%02d/%02d/%04d",
-                    c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)));
-            inKm.setText(String.valueOf(vehicle.km));
-        }
-
-        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle(existing == null ? R.string.nuova_manutenzione : R.string.modifica_manutenzione)
-                .setView(view)
-                .setPositiveButton(R.string.salva, null)
-                .setNegativeButton(R.string.annulla, null)
-                .create();
-
-        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(b -> {
-            String tipo = inTipo.getText() == null ? "" : inTipo.getText().toString().trim();
-            String data = MainActivity.text(inData);
-            if (tipo.isEmpty()) {
-                inTipo.setError(getString(R.string.campo_obbligatorio));
-                return;
-            }
-            if (data.isEmpty()) {
-                inData.setError(getString(R.string.campo_obbligatorio));
-                return;
-            }
-            Maintenance m = existing == null ? new Maintenance() : existing;
-            m.tipo = tipo;
-            m.data = data;
-            m.km = MainActivity.parseLong(MainActivity.text(inKm));
-            m.costo = parseCosto(MainActivity.text(inCosto));
-            m.scadenza = MainActivity.text(inScadenza);
-            m.note = MainActivity.text(inNote);
-            if (existing == null) {
-                vehicle.manutenzioni.add(m);
-            }
-            if (m.km > vehicle.km) {
-                vehicle.km = m.km;
-            }
-            storage.save();
-            refresh();
-            dialog.dismiss();
-        }));
-        dialog.show();
-    }
-
-    private void pickDate(TextInputEditText target) {
-        Calendar c = Calendar.getInstance();
-        String current = MainActivity.text(target);
-        try {
-            String[] p = current.split("/");
-            c.set(Integer.parseInt(p[2]), Integer.parseInt(p[1]) - 1, Integer.parseInt(p[0]));
-        } catch (Exception ignored) {
-        }
-        new DatePickerDialog(this, (view, year, month, day) ->
-                target.setText(String.format(Locale.ITALY, "%02d/%02d/%04d", day, month + 1, year)),
-                c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
-    }
-
-    static double parseCosto(String s) {
-        try {
-            return Double.parseDouble(s.replace("€", "").replace(",", ".").trim());
-        } catch (Exception e) {
-            return 0;
-        }
     }
 }

@@ -107,7 +107,7 @@ public class PdfExporter {
         // storico manutenzioni
         List<Maintenance> ordinate = new ArrayList<>(v.manutenzioni);
         ordinate.sort(Comparator.comparing(
-                (Maintenance m) -> VehicleDetailActivity.parseDate(m.data)).reversed());
+                (Maintenance m) -> Maintenance.ordinabile(m.data)).reversed());
 
         canvas.drawText(ctx.getString(R.string.pdf_storico, ordinate.size()), M, y, pH2);
         y += 20;

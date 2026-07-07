@@ -110,4 +110,6 @@
     <string name="tema_sistema">Sistema</string>
     <string name="fab_veicolo">Veicolo</string>
     <string name="fab_manutenzione">Manutenzione</string>
+    <string name="apri_manutenzioni">Manutenzioni (%1$d)</string>
+    <string name="titolo_manutenzioni">Manutenzioni · %1$s</string>
 </resources>

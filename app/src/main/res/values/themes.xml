@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base comune (font + statusbar); i colori stanno nelle varianti chiara/scura -->
     <style name="Base.Theme.GestoreVeicoli" parent="Theme.Material3.DayNight.NoActionBar">
@@ -42,61 +42,77 @@
     <style name="Font.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.BodySmall" parent="TextAppearance.Material3.BodySmall">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
     <style name="Font.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:fontFamily">@font/naowh</item>
         <item name="fontFamily">@font/naowh</item>
+        <item name="android:letterSpacing">0.06</item>
     </style>
 </resources>
+

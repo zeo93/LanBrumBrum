@@ -30,6 +30,16 @@ public class Maintenance {
         return o;
     }
 
+    /** Valore ordinabile della data gg/mm/aaaa (aaaammgg), 0 se non valida. */
+    public static long ordinabile(String d) {
+        try {
+            String[] p = d.split("/");
+            return Long.parseLong(p[2]) * 10000 + Long.parseLong(p[1]) * 100 + Long.parseLong(p[0]);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     public static Maintenance fromJson(JSONObject o) {
         Maintenance m = new Maintenance();
         m.id = o.optString("id", m.id);
